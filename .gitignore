@@ -1,0 +1,4 @@
+/tehpst_venv
+*.pyc
+**/__pycache__
+*.json

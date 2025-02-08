@@ -9,10 +9,10 @@ class PreBase:
     @declared_attr
     def __tablename__(self):
         return self.__name__.lower()
-    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
 
 Base = declarative_base(cls=PreBase)
 
 class ProductUrl(Base):
-    url: Mapped[str] = mapped_column(Text, nullable=False)
     product_name: Mapped[str] = mapped_column(String(512), nullable=False)
+    url: Mapped[str] = mapped_column(Text, nullable=False)

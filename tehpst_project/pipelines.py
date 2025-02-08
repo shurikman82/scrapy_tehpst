@@ -7,7 +7,7 @@
 # useful for handling different item types with a single interface
 from itemadapter import ItemAdapter
 from scrapy.exceptions import DropItem
-#from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, async_scoped_session, create_async_engine
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, async_scoped_session, create_async_engine
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
 
@@ -38,20 +38,41 @@ class TehpstProjectPipeline:
 
 
 class TehpstToDBPipeline:
+    async_engine = create_async_engine(ASYNC_CONNECTION_STRING)
+    async_session_factory = async_sessionmaker(bind=async_engine, class_=AsyncSession)
+    AsyncLocalSession = async_scoped_session(session_factory=async_session_factory, scopefunc=lambda: None)
+
     def open_spider(self, spider):
         engine = create_engine(CONNECTION_STRING)
+#        async_engine = create_async_engine(ASYNC_CONNECTION_STRING)
         Base.metadata.drop_all(engine)
         Base.metadata.create_all(engine)
+#        async_engine = create_async_engine(ASYNC_CONNECTION_STRING)
+#        async_session_factory = async_sessionmaker(bind=async_engine, class_=AsyncSession)
+#        AsyncLocalSession = async_scoped_session(session_factory=async_session_factory, scopefunc=lambda: spider)
+#        self.session = AsyncSession(engine)
 #        async_session_factory = async_sessionmaker(bind=async_engine, class_=AsyncSession)
 #        AsyncLocalSession = async_scoped_session(session_factory=async_session_factory)
-        self.session = Session(engine)
+#        self.session = Session(engine)
 
-    def process_item(self, item, spider):
+    async def process_item(self, item, spider):
         if spider.name == 'tehpst_products':
-            product_url = ProductUrl(url=item['href'], product_name=item['product_name'])
+            adapter = ItemAdapter(item)
+            product_url = ProductUrl(url=adapter['href'], product_name=adapter['product_name'])
+#            async with self.AsyncLocalSession() as session:
+            self.session = self.AsyncLocalSession()
             self.session.add(product_url)
-            self.session.commit()
-            return item
+#            await self.AsyncLocalSession.commit()
+#            await self.session.flush()
+        return item
 
     def close_spider(self, spider):
+        self.session.commit()
         self.session.close()
+
+
+    async def get_async_session(self):
+        async_engine = create_async_engine(ASYNC_CONNECTION_STRING)
+        async_session_factory = async_sessionmaker(bind=async_engine, class_=AsyncSession)
+        AsyncLocalSession = async_scoped_session(session_factory=async_session_factory)
+        yield AsyncLocalSession

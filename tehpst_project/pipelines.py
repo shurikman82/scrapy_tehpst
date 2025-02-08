@@ -53,14 +53,14 @@ class TehpstToDBPipeline:
 #        self.session = AsyncSession(engine)
 #        async_session_factory = async_sessionmaker(bind=async_engine, class_=AsyncSession)
 #        AsyncLocalSession = async_scoped_session(session_factory=async_session_factory)
-#        self.session = Session(engine)
+        self.session = Session(engine)
 
-    async def process_item(self, item, spider):
+    def process_item(self, item, spider):
         if spider.name == 'tehpst_products':
             adapter = ItemAdapter(item)
             product_url = ProductUrl(url=adapter['href'], product_name=adapter['product_name'])
 #            async with self.AsyncLocalSession() as session:
-            self.session = self.AsyncLocalSession()
+            self.session = self.Session()
             self.session.add(product_url)
 #            await self.AsyncLocalSession.commit()
 #            await self.session.flush()

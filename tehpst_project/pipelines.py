@@ -48,7 +48,8 @@ class TehpstToDBPipeline:
 
     def process_item(self, item, spider):
         if spider.name == 'tehpst_products':
-            product_url = ProductUrl(url=item['href'], product_name=item['product_name'])
+            adapter = ItemAdapter(item)
+            product_url = ProductUrl(url=adapter['href'], product_name=adapter['product_name'])
             self.session.add(product_url)
             self.session.commit()
             return item

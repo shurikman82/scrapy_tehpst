@@ -55,6 +55,8 @@ class TehpstToDBPipeline:
         Base.metadata.create_all(engine)
 #        self.async_session = AsyncSession(self.async_engine)
         async_engine = create_async_engine(ASYNC_CONNECTION_STRING)
+#        Base.metadata.drop_all(async_engine)
+#        Base.metadata.create_all(async_engine)
 #        async_session_factory = async_sessionmaker(bind=async_engine, class_=AsyncSession)
 #        AsyncLocalSession = async_scoped_session(session_factory=async_session_factory, scopefunc=lambda: spider)
         self.async_session = AsyncSession(async_engine)

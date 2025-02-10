@@ -39,12 +39,11 @@ class TehpstProjectPipeline:
 
 class TehpstToDBPipeline:
     def open_spider(self, spider):
-        engine = create_engine(CONNECTION_STRING)
-        Base.metadata.drop_all(engine)
-        Base.metadata.create_all(engine)
-#        async_session_factory = async_sessionmaker(bind=async_engine, class_=AsyncSession)
-#        AsyncLocalSession = async_scoped_session(session_factory=async_session_factory)
-        self.session = Session(engine)
+        if spider.name == 'tehpst_products':
+            engine = create_engine(CONNECTION_STRING)
+            Base.metadata.drop_all(engine)
+            Base.metadata.create_all(engine)
+            self.session = Session(engine)
 
     def process_item(self, item, spider):
         if spider.name == 'tehpst_products':
@@ -55,4 +54,5 @@ class TehpstToDBPipeline:
             return item
 
     def close_spider(self, spider):
-        self.session.close()
+        if spider.name == 'tehpst_products':
+            self.session.close()

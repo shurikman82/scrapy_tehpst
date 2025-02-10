@@ -16,3 +16,5 @@ Base = declarative_base(cls=PreBase)
 class ProductUrl(Base):
     url: Mapped[str] = mapped_column(Text, nullable=False)
     product_name: Mapped[str] = mapped_column(String(512), nullable=False)
+
+

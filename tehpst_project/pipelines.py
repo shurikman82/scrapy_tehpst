@@ -38,9 +38,15 @@ class TehpstProjectPipeline:
 
 
 class TehpstToDBPipeline:
-    async_engine = create_async_engine(ASYNC_CONNECTION_STRING)
-    async_session_factory = async_sessionmaker(bind=async_engine, class_=AsyncSession)
-    AsyncLocalSession = async_scoped_session(session_factory=async_session_factory, scopefunc=lambda: None)
+    def __init__(self):
+        self.create_async_connection()
+    
+    def create_async_connection(self):
+        self.async_engine = create_async_engine(ASYNC_CONNECTION_STRING)
+#        self.async_session_factory = async_sessionmaker(bind=self.async_engine, class_=AsyncSession)
+#        self.AsyncLocalSession = async_scoped_session(session_factory=self.async_session_factory, scopefunc=lambda: None)
+#        self.session = self.AsyncLocalSession()
+        self.async_session = AsyncSession(self.async_engine)
 
     def open_spider(self, spider):
         engine = create_engine(CONNECTION_STRING)
@@ -53,26 +59,21 @@ class TehpstToDBPipeline:
 #        self.session = AsyncSession(engine)
 #        async_session_factory = async_sessionmaker(bind=async_engine, class_=AsyncSession)
 #        AsyncLocalSession = async_scoped_session(session_factory=async_session_factory)
-        self.session = Session(engine)
+#        self.session = Session(engine)
 
     def process_item(self, item, spider):
         if spider.name == 'tehpst_products':
             adapter = ItemAdapter(item)
             product_url = ProductUrl(url=adapter['href'], product_name=adapter['product_name'])
-#            async with self.AsyncLocalSession() as session:
-            self.session = self.Session()
-            self.session.add(product_url)
+            self.async_session.add(product_url)
+            self.async_session.commit()
+#            await session.close()
+#            self.session = self.Session()
+#            self.session.add(product_url)
 #            await self.AsyncLocalSession.commit()
 #            await self.session.flush()
         return item
 
     def close_spider(self, spider):
-        self.session.commit()
-        self.session.close()
-
-
-    async def get_async_session(self):
-        async_engine = create_async_engine(ASYNC_CONNECTION_STRING)
-        async_session_factory = async_sessionmaker(bind=async_engine, class_=AsyncSession)
-        AsyncLocalSession = async_scoped_session(session_factory=async_session_factory)
-        yield AsyncLocalSession
+#        self.session.commit()
+        self.async_session.close()

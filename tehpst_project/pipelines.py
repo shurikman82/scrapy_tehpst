@@ -7,12 +7,12 @@
 # useful for handling different item types with a single interface
 from itemadapter import ItemAdapter
 from scrapy.exceptions import DropItem
-#from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, async_scoped_session, create_async_engine
+from slugify import slugify
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
 
 from tehpst_project.constants import ASYNC_CONNECTION_STRING, CONNECTION_STRING
-from tehpst_project.models import Base, ProductUrl
+from tehpst_project.models import Base, ProductUrl, FullProduct, Stocks, Product_property
 
 
 class TehpstProjectPipeline:
@@ -44,6 +44,11 @@ class TehpstToDBPipeline:
             Base.metadata.drop_all(engine)
             Base.metadata.create_all(engine)
             self.session = Session(engine)
+        if spider.name == 'tehpst_full_products':
+            engine = create_engine(CONNECTION_STRING)
+#            Base.metadata.drop_all(engine)
+            Base.metadata.create_all(engine)
+            self.session = Session(engine)
 
     def process_item(self, item, spider):
         if spider.name == 'tehpst_products':
@@ -52,7 +57,45 @@ class TehpstToDBPipeline:
             self.session.add(product_url)
             self.session.commit()
             return item
+        if spider.name == 'tehpst_full_products':
+            adapter = ItemAdapter(item)
+            if adapter.get('name'):
+                product = FullProduct(
+                    name=adapter['name'],
+                    art=adapter['art'],
+                    brand_name=adapter['brand_name'],
+                    quantity=adapter['quantity'],
+                    price=adapter['price'],
+                    description=adapter['description'],
+                )
+                self.session.add(product)
+                self.session.flush()
+                product_id = product.id
+                product.slug = slugify(adapter['name']) + '-' + str(product_id)
+                self.session.flush()
+                return item
+            if adapter.get('stock_name'):
+                product_id = self.session.get('product.id')
+                stock = Stocks(
+                    stock_name=adapter['stock_name'],
+                    stock_quantity=adapter['stock_quantity'],
+                    product_id=product_id,
+                )
+                self.session.add(stock)
+                return item
+            if adapter.get('property_name'):
+                product_id = self.session.get('product.id')
+                property = Product_property(
+                    property_name=adapter['property_name'],
+                    property_value=adapter['property_value'],
+                    product_id=product_id,
+                )
+                self.session.add(property)
+                self.session.commit()
+                return item
 
     def close_spider(self, spider):
         if spider.name == 'tehpst_products':
+            self.session.close()
+        if spider.name == 'tehpst_full_products':
             self.session.close()

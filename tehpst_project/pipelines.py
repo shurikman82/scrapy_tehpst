@@ -75,7 +75,6 @@ class TehpstToDBPipeline:
                 self.session.flush()
                 return item
             if adapter.get('stock_name'):
-                product_id = self.session.get('product.id')
                 stock = Stocks(
                     stock_name=adapter['stock_name'],
                     stock_quantity=adapter['stock_quantity'],
@@ -84,7 +83,6 @@ class TehpstToDBPipeline:
                 self.session.add(stock)
                 return item
             if adapter.get('property_name'):
-                product_id = self.session.get('product.id')
                 property = Product_property(
                     property_name=adapter['property_name'],
                     property_value=adapter['property_value'],

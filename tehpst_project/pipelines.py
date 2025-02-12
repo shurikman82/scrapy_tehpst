@@ -70,42 +70,36 @@ class TehpstToDBPipeline:
             return item
         if spider.name == 'tehpst_full_products':
             adapter = ItemAdapter(item)
-            if adapter.get('name'):
-                product = FullProduct(
-                    name=adapter['name'],
-                    art=adapter['art'],
-                    brand_name=adapter['brand_name'],
-                    quantity=adapter['quantity'],
-                    price=adapter['price'],
-                    description=adapter['description'],
-                )
-                self.session.add(product)
-                self.session.flush()
-                product_id = product.id
-                product.slug = slugify(adapter['name']) + '-' + str(product_id)
-                self.session.commit()
-                return item
-            if adapter.get('stock_name'):
-                product_art = adapter['product_art']
-                product_id = self.session.execute(select(FullProduct.id).filter_by(art=product_art)).scalar_one()
-                stock = Stocks(
-                    stock_name=adapter['stock_name'],
-                    stock_quantity=adapter['stock_quantity'],
+            product = FullProduct(
+                name=adapter['name'],
+                art=adapter['art'],
+                brand_name=adapter['brand_name'],
+                quantity=adapter['quantity'],
+                price=adapter['price'],
+                description=adapter['description'],
+            )
+            self.session.add(product)
+            self.session.flush()
+            product_id = product.id
+            product.slug = slugify(adapter['name']) + '-' + str(product_id)
+            stocks = adapter['stocks']
+            for stock in stocks:
+                current_stock = Stocks(
+                    stock_name=stock['stock_name'],
+                    stock_quantity=stock['stock_quantity'],
                     product_id=product_id,
                 )
-                self.session.add(stock)
-                return item
-            if adapter.get('property_name'):
-                product_art = adapter['product_art']
-                product_id = self.session.execute(select(FullProduct.id).filter_by(art=product_art)).scalar_one()
-                property = Product_property(
-                    property_name=adapter['property_name'],
-                    property_value=adapter['property_value'],
+                self.session.add(current_stock)
+            properties = adapter['properties']
+            for property in properties:
+                current_property = Product_property(
+                    property_name=property['property_name'],
+                    property_value=property['property_value'],
                     product_id=product_id,
                 )
-                self.session.add(property)
-                self.session.commit()
-                return item
+                self.session.add(current_property)
+            self.session.commit()
+            return item
 
     def close_spider(self, spider):
         if spider.name == 'tehpst_products':

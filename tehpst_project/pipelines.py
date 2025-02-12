@@ -8,7 +8,7 @@
 from itemadapter import ItemAdapter
 from scrapy.exceptions import DropItem
 from slugify import slugify
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, select
 from sqlalchemy.orm import Session
 
 from tehpst_project.constants import ASYNC_CONNECTION_STRING, CONNECTION_STRING
@@ -72,9 +72,11 @@ class TehpstToDBPipeline:
                 self.session.flush()
                 product_id = product.id
                 product.slug = slugify(adapter['name']) + '-' + str(product_id)
-                self.session.flush()
+                self.session.commit()
                 return item
             if adapter.get('stock_name'):
+                product_art = adapter['product_art']
+                product_id = self.session.execute(select(FullProduct.id).filter_by(art=product_art)).scalar_one()
                 stock = Stocks(
                     stock_name=adapter['stock_name'],
                     stock_quantity=adapter['stock_quantity'],
@@ -83,6 +85,8 @@ class TehpstToDBPipeline:
                 self.session.add(stock)
                 return item
             if adapter.get('property_name'):
+                product_art = adapter['product_art']
+                product_id = self.session.execute(select(FullProduct.id).filter_by(art=product_art)).scalar_one()
                 property = Product_property(
                     property_name=adapter['property_name'],
                     property_value=adapter['property_value'],

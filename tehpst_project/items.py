@@ -35,10 +35,10 @@ class TehpstFullProductItem(scrapy.Item):
 class TehpstStockItem(scrapy.Item):
     stock_name = scrapy.Field()
     stock_quantity = scrapy.Field()
-#    product_id = scrapy.Field()
+    product_art = scrapy.Field()
 
 
 class TehpstPropertyItem(scrapy.Item):
     property_name = scrapy.Field()
     property_value = scrapy.Field()
-#    product_id = scrapy.Field()
+    product_art = scrapy.Field()

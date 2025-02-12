@@ -24,9 +24,13 @@ class TehpstFullProductsSpider(scrapy.Spider):
         values = my_div.css('h5::text').getall()
         print(values)
         name, art, brand_name, quantity = values[0], values[1].strip().split()[-1], values[2], values[3].strip().split()[-1]
+        if quantity == 'наличие':
+            quantity = '0'
         div_2 = response.css('main.main-container').css('div.product__price')
         price = div_2.css('span::text').get()
         price_clean = price.strip().split()[0]
+        if price_clean == 'Цена':
+            price_clean = '0'
         div_3 = response.css('main.main-container').css('div.product__desc.m-t-25.m-b-30')
         description = div_3.css('p::text').get()
         product_data = {
@@ -46,6 +50,7 @@ class TehpstFullProductsSpider(scrapy.Spider):
             stock_data = {
                 'stock_name': stock_name,
                 'stock_quantity': stock_quantity,
+                'product_art': art,
             }
             yield TehpstStockItem(stock_data)
         my_div_2 = response.css('div.product.product--1.border-around.product-details-tab-area').css('div.tab-pane.show.active')
@@ -56,6 +61,7 @@ class TehpstFullProductsSpider(scrapy.Spider):
             property_data = {
                 'property_name': property_name,
                 'property_value': property_value,
+                'product_art': art,
             }
             yield TehpstPropertyItem(property_data)
 

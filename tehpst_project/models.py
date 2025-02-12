@@ -22,7 +22,7 @@ class FullProduct(Base):
     name: Mapped[str] = mapped_column(String(512), nullable=True)
     art: Mapped[str] = mapped_column(String(128), nullable=False)
     description: Mapped[str] = mapped_column(Text, nullable=True)
-    slug: Mapped[str] = mapped_column(String(128), nullable=False, default='')
+    slug: Mapped[str] = mapped_column(String(255), nullable=False, default='')
 #    country :Mapped[str] = mapped_column(String(50), default='')
     quantity: Mapped[str] = mapped_column(String(10))
     price: Mapped[str] = mapped_column(String(10))
@@ -36,6 +36,6 @@ class Stocks(Base):
 
 
 class Product_property(Base):
-    property_name: Mapped[str] = mapped_column(String(128), nullable=False)
-    property_value: Mapped[str] = mapped_column(String(128), nullable=True)
+    property_name: Mapped[str] = mapped_column(String(254), nullable=False)
+    property_value: Mapped[str] = mapped_column(String(254), nullable=True)
     product_id: Mapped[int] = mapped_column(ForeignKey('fullproduct.id', ondelete='CASCADE'))

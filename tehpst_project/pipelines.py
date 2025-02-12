@@ -13,12 +13,14 @@ from sqlalchemy.orm import Session
 
 from tehpst_project.constants import ASYNC_CONNECTION_STRING, CONNECTION_STRING
 from tehpst_project.models import Base, ProductUrl, FullProduct, Stocks, Product_property
+from tehpst_project.items import TehpstFullProductItem
 
 
 class TehpstProjectPipeline:
     def __init__(self):
         self.class_names = set()
         self.hrefs = set()
+        self.arts = set()
     def process_item(self, item, spider):
         adapter = ItemAdapter(item)
         if spider.name == 'tehpst_products':
@@ -26,6 +28,15 @@ class TehpstProjectPipeline:
                 raise DropItem(f'Dublicate item found: {item!r}')
             else:
                 self.hrefs.add(adapter['href'])
+                return item
+        if spider.name == 'tehpst_full_products':
+            if isinstance(item, TehpstFullProductItem):
+                if adapter['art'] in self.arts:
+                    raise DropItem(f'Dublicate art found: {item!r}')
+                else:
+                    self.arts.add(adapter['art'])
+                    return item
+            else:
                 return item
         if not adapter.get('class_name'):
             return item

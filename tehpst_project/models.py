@@ -20,7 +20,7 @@ class ProductUrl(Base):
 
 class FullProduct(Base):
     name: Mapped[str] = mapped_column(String(512), nullable=True)
-    art: Mapped[str] = mapped_column(String(128), nullable=False)
+    art: Mapped[str] = mapped_column(String(128), nullable=False, index=True)
     description: Mapped[str] = mapped_column(Text, nullable=True)
     slug: Mapped[str] = mapped_column(String(255), nullable=False, default='')
 #    country :Mapped[str] = mapped_column(String(50), default='')

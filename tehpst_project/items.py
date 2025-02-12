@@ -25,8 +25,6 @@ class TehpstFullProductItem(scrapy.Item):
     name = scrapy.Field()
     art = scrapy.Field()
     description = scrapy.Field()
-#    slug = scrapy.Field()
-#    country = scrapy.Field()
     quantity = scrapy.Field()
     price = scrapy.Field()
     brand_name = scrapy.Field()

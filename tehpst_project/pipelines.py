@@ -75,8 +75,8 @@ class TehpstToDBPipeline:
                     name=adapter['name'],
                     art=adapter['art'],
                     brand_name=adapter['brand_name'],
-                    quantity=adapter['quantity'],
-                    price=adapter['price'],
+                    quantity=int(adapter['quantity']),
+                    price=float(adapter['price']),
                     description=adapter['description'],
                 )
                 self.session.add(product)
@@ -90,7 +90,7 @@ class TehpstToDBPipeline:
                 product_id = self.session.execute(select(FullProduct.id).filter_by(art=product_art)).scalar_one()
                 stock = Stocks(
                     stock_name=adapter['stock_name'],
-                    stock_quantity=adapter['stock_quantity'],
+                    stock_quantity=int(adapter['stock_quantity']),
                     product_id=product_id,
                 )
                 self.session.add(stock)

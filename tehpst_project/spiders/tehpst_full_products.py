@@ -1,11 +1,10 @@
 import scrapy
-from slugify import slugify
 from sqlalchemy import select, create_engine
 from sqlalchemy.orm import Session
 
 from tehpst_project.constants import CONNECTION_STRING
 from tehpst_project.items import TehpstFullProductItem, TehpstPropertyItem, TehpstStockItem
-from tehpst_project.models import Base, ProductUrl, FullProduct, Stocks
+from tehpst_project.models import Base, ProductUrl
 
 
 class TehpstFullProductsSpider(scrapy.Spider):
@@ -28,7 +27,7 @@ class TehpstFullProductsSpider(scrapy.Spider):
             quantity = '0'
         div_2 = response.css('main.main-container').css('div.product__price')
         price = div_2.css('span::text').get()
-        price_clean = price.strip().split()[0]
+        price_clean = price.strip().split()[0].replace(',', '.')
         if price_clean == 'Цена':
             price_clean = '0'
         div_3 = response.css('main.main-container').css('div.product__desc.m-t-25.m-b-30')

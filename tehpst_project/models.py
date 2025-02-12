@@ -24,14 +24,14 @@ class FullProduct(Base):
     description: Mapped[str] = mapped_column(Text, nullable=True)
     slug: Mapped[str] = mapped_column(String(255), nullable=False, default='')
 #    country :Mapped[str] = mapped_column(String(50), default='')
-    quantity: Mapped[str] = mapped_column(String(10))
-    price: Mapped[str] = mapped_column(String(10))
+    quantity: Mapped[int]
+    price: Mapped[float]
     brand_name: Mapped[str] = mapped_column(String(50), nullable=True)
 
 
 class Stocks(Base):
     stock_name: Mapped[str] = mapped_column(String(128), nullable=False)
-    stock_quantity: Mapped[str] = mapped_column(String(10))
+    stock_quantity: Mapped[int]
     product_id: Mapped[int] = mapped_column(ForeignKey('fullproduct.id', ondelete='CASCADE'))
 
 

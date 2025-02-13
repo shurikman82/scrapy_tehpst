@@ -14,10 +14,12 @@ class TehpstFullProductsSpider(scrapy.Spider):
     start_urls = []
     engine = create_engine(CONNECTION_STRING)
     session = Session(engine)
-    all_url = session.execute(select(ProductUrl.url))
-    for url in all_url.scalars():
-        start_urls.append(url)
-    print(start_urls)
+    try:
+        all_url = session.execute(select(ProductUrl.url))
+        for url in all_url.scalars():
+            start_urls.append(url)
+    except Exception:
+        print('Table "productrl" is empty')
 
     def parse(self, response):
         my_div = response.css('main.main-container').css('div.product-details-box')

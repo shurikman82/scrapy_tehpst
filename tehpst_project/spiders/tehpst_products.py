@@ -12,7 +12,6 @@ class TehpstProductsSpider(scrapy.Spider):
         classes = json.load(f)
     for class_ in classes:
         start_urls.append(class_['href'])
-    start_urls = start_urls[:1]
 
     def parse(self, response):
         my_div = response.css('div.tab-pane.show.active.clearfix')

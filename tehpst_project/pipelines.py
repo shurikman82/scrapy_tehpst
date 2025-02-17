@@ -1,17 +1,10 @@
-# Define your item pipelines here
-#
-# Don't forget to add your pipeline to the ITEM_PIPELINES setting
-# See: https://docs.scrapy.org/en/latest/topics/item-pipeline.html
-
-
-# useful for handling different item types with a single interface
 from itemadapter import ItemAdapter
 from scrapy.exceptions import DropItem
 from slugify import slugify
 from sqlalchemy import create_engine, select
 from sqlalchemy.orm import Session
 
-from tehpst_project.constants import ASYNC_CONNECTION_STRING, CONNECTION_STRING
+from tehpst_project.constants import CONNECTION_STRING
 from tehpst_project.models import Base, ProductUrl, FullProduct, Stocks, Product_property
 from tehpst_project.items import TehpstFullProductItem
 
@@ -57,7 +50,6 @@ class TehpstToDBPipeline:
             self.session = Session(engine)
         if spider.name == 'tehpst_full_products':
             engine = create_engine(CONNECTION_STRING)
-#            Base.metadata.drop_all(engine)
             Base.metadata.create_all(engine)
             self.session = Session(engine)
 

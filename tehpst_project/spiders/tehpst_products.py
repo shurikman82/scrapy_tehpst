@@ -8,10 +8,13 @@ class TehpstProductsSpider(scrapy.Spider):
     name = "tehpst_products"
     allowed_domains = ["tehpst.site"]
     start_urls = []
-    with open('classes.json', 'r') as f:
-        classes = json.load(f)
-    for class_ in classes:
-        start_urls.append(class_['href'])
+    try:
+        with open('classes.json', 'r') as f:
+            classes = json.load(f)
+        for class_ in classes:
+            start_urls.append(class_['href'])
+    except Exception:
+        print('file "classes.json" is empty')
 
     def parse(self, response):
         my_div = response.css('div.tab-pane.show.active.clearfix')
@@ -30,7 +33,6 @@ class TehpstProductsSpider(scrapy.Spider):
             for link in next_page_links:
                 if 'Следующая' in link.css('::text').get():
                     next_page = link
-#                    break
         if next_page:
             next_page_link = next_page.css('a::attr(href)').get()
             yield response.follow(

@@ -1,11 +1,10 @@
 import scrapy
-from slugify import slugify
 from sqlalchemy import select, create_engine
 from sqlalchemy.orm import Session
 
 from tehpst_project.constants import CONNECTION_STRING
 from tehpst_project.items import TehpstFullProductItem
-from tehpst_project.models import Base, ProductUrl, FullProduct, Stocks
+from tehpst_project.models import Base, ProductUrl
 
 
 class TehpstFullProductsSpider(scrapy.Spider):
@@ -20,6 +19,13 @@ class TehpstFullProductsSpider(scrapy.Spider):
             start_urls.append(url)
     except Exception:
         print('Table "productrl" is empty')
+
+
+    @classmethod
+    def update_settings(cls, settings):
+        super().update_settings(settings)
+        settings.set('DOWNLOAD_DELAY', '0.1', priority='spider')
+
 
     def parse(self, response):
         my_div = response.css('main.main-container').css('div.product-details-box')

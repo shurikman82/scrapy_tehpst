@@ -1,4 +1,3 @@
-import json
 import scrapy
 
 from tehpst_project.items import TehpstGroupItem

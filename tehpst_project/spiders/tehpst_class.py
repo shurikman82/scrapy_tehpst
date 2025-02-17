@@ -8,10 +8,13 @@ class TehpstClassSpider(scrapy.Spider):
     name = "tehpst_class"
     allowed_domains = ["tehpst.site"]
     start_urls = []
-    with open('groups.json', 'r') as f:
-        groups = json.load(f)
-    for group in groups:
-        start_urls.append(group['href'])
+    try:
+        with open('groups.json', 'r') as f:
+            groups = json.load(f)
+        for group in groups:
+            start_urls.append(group['href'])
+    except Exception:
+        print('file "groups.json" is empty')
 
     def parse(self, response):
         for class_ in response.css('div.tab-pane.show.active.clearfix'):

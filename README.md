@@ -10,51 +10,51 @@
 Для запуска проекта выполните следующие шаги:
 
 Склонируйте репозиторий scrapy_tehpst на свой компьютер.
-'''bash
+```bash
 git clone git@github.com:shurikman82/scrapy_tehpst.git
-'''
+```
 Создайте и активируйте виртуальное окружение:
 для Windows
-'''bash
+```bash
 python -m venv venv
-'''
-'''bash
+```
+```bash
 source venv/Scripts/activate
-'''
+```
 для Linux/macOS
-'''bash
+```bash
 python3 -m venv venv
-'''
-'''bash
+```
+```bash
 source venv/bin/activate
-'''
+```
 Обновите pip:
 для Windows
-'''bash
+```bash
 python -m pip install --upgrade pip
-'''
+```
 для Linux/macOS
-'''bash
+```bash
 python3 -m pip install --upgrade pip
-'''
+```
 Установите зависимости из файла requirements.txt:
-'''bash
+```bash
 pip install -r requirements.txt
-'''
+```
 Создайте и заполните файл .env на примере env.example.
 Запустите подряд несколько пауков:
-'''bash
+```bash
 scrapy crawl tehpst_group -O groups.json
-'''
-'''bash
+```
+```bash
 scrapy crawl tehpst_class -O classes.json
-'''
-'''bash
+```
+```bash
 scrapy crawl tehpst_products
-'''
-'''bash
+```
+```bash
 scrapy crawl tehpst_full_products
-'''
+```
 
 Автор:
 Александр Русанов, shurik.82rusanov@yandex.ru

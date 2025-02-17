@@ -1,2 +1,7 @@
-ASYNC_CONNECTION_STRING = "mysql+aiomysql://shurik:25121982aA@websweets.ru:3306/parse"
-CONNECTION_STRING = "mysql+mysqlconnector://shurik:25121982aA@websweets.ru:3306/parse"
+import os
+from dotenv import load_dotenv
+
+
+load_dotenv()
+ASYNC_CONNECTION_STRING = os.getenv('ASYNC_CONNECTION_STRING')
+CONNECTION_STRING = os.getenv('CONNECTION_STRING')

@@ -13,10 +13,17 @@ class TehpstFullProductsSpider(scrapy.Spider):
     start_urls = []
     engine = create_engine(CONNECTION_STRING)
     session = Session(engine)
-    all_url = session.execute(select(ProductUrl.url))
-    for url in all_url.scalars():
-        start_urls.append(url)
-    print(start_urls)
+    try:
+        all_url = session.execute(select(ProductUrl.url))
+        for url in all_url.scalars():
+            start_urls.append(url)
+    except Exception:
+        print('table "ProductUrl" is not definded')
+
+    @classmethod
+    def update_settings(cls, settings):
+        super().update_settings(settings)
+        settings.set('DOWNLOAD_DELAY', '0.1', priority='spider')
 
     def parse(self, response):
         my_div = response.css('main.main-container').css('div.product-details-box')
